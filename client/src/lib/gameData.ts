@@ -63,73 +63,73 @@ export const gameConfig = {
           id: "p1_s1",
           text: "太久的事情想不起来了。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Threat", "Logic"], 
+          weaknessTypes: ["Threat", "Questioning"], 
           breakFeedback: "BOSS：我想起来了... 这个烂地儿大家都这样。",
           interactions: {
             "Threat": [
               { player: "那我请鹰头来审问你一次。", boss: "...." },
-              { player: "这种健忘症，鹰头最会治了。", boss: "...." },
-              { player: "你想在牢里慢慢想吗？", boss: "...." },
-              { player: "再想不起来，我就把你交给那些受害者。", boss: "...." }
+              { player: "断翅之痛，也忘了吗？", boss: "闭嘴。" },
+              { player: "我有100种办法让你瞬间清醒。", boss: "……哼。" },
+              { player: "我最爱揍装傻充愣的人。", boss: "你试试？" }
             ],
-            "Logic": [
-              { player: "怎么可能想不起来？", boss: "因为不重要了" },
-              { player: "重要的事情大脑会优先存储，你在撒谎。", boss: "..." },
-              { player: "你的微表情出卖了你，你记得很清楚。", boss: "..." },
-              { player: "时间不长，且印象深刻，不可能遗忘。", boss: "..." }
+            "Questioning": [
+              { player: "告发朋友的事情，你忘记了吗？", boss: "我没有朋友" },
+              { player: "是忘了，还是不敢想起？", boss: "……" },
+              { player: "不会是选择性失忆吧？", boss: "……别胡咧咧。" },
+              { player: "那为什么你还握着设计图？", boss: "（手中图纸火焰猛涨）……你！" }
             ],
             "Mockery": [{ player: "鸟的记忆只有3秒吗？", boss: "是的，你刚才问了什么？" }],
-            "Questioning": [{ player: "告发朋友的事情，你忘记了吗？", boss: "我没有朋友" }],
+            "Logic": [{ player: "怎么可能想不起来？", boss: "因为不重要了" }],
             "Deceit": [{ player: "我知道你做了伤害别人的事", boss: "我从来没做过" }],
-            "Empathy": [{ player: "那件事也是你的心结吧。", boss: "别自作多情" }]
+            "Empathy": [{ player: "我很想帮助你，因为我知道，那件事也是你的心结", boss: "别自作多情" }]
           }
         },
         {
           id: "p1_s2",
           text: "我当年是告发了他，但那不是小孩经常做的蠢事吗？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Mockery", "Questioning"], 
+          weaknessTypes: ["Questioning", "Logic"], 
           breakFeedback: "BOSS：难道我做错了吗？",
           interactions: {
-            "Mockery": [
-              { player: "你不就是因为那件事，混成这副德行？", boss: "你能让我混的更好？" },
-              { player: "蠢事？你这可是坏事做尽。", boss: "..." },
-              { player: "把背叛说得这么清新脱俗，佩服。", boss: "..." },
-              { player: "你这‘小孩’的心思可比大人还毒。", boss: "..." }
-            ],
             "Questioning": [
               { player: "哪家小孩犯蠢，能把朋友坑进大牢十年？", boss: "十年而已，妖命那么长..." },
-              { player: "只是犯蠢？那是蓄意谋害！", boss: "..." },
-              { player: "你管这叫蠢事？", boss: "..." },
-              { player: "别拿年龄当挡箭牌，你很清楚后果。", boss: "..." }
+              { player: "用朋友的自由换自己令牌，这叫蠢？", boss: "你懂什么？！" },
+              { player: "哪个孩子会拿朋友祭天？", boss: "……（捏紧特赦令）" },
+              { player: "这\"蠢事\"的代价，你可付了一分？", boss: "……（气势一滞）" }
+            ],
+            "Logic": [
+              { player: "你不仅是告发，你还说了谎，栽赃别人", boss: "小孩子不就是老爱说谎吗？" },
+              { player: "对别人来说是蠢事，对你来说可是绝顶聪明的买卖。", boss: "……（捏紧特赦令）" },
+              { player: "你不光告发，还把自己摘干净，简直是神童啊！", boss: "..." },
+              { player: "你这是给人家置于死地啊，不是蠢是坏！", boss: "..." }
             ],
             "Threat": [{ player: "信不信再让鹰头打你一顿？", boss: "你就这一招吗？" }],
-            "Logic": [{ player: "你不仅是告发，你还说了谎，栽赃别人", boss: "小孩子不就是老爱说谎吗？" }],
+            "Mockery": [{ player: "你不就是因为那件事，混成这副德行", boss: "你能让我混的更好？" }],
             "Deceit": [{ player: "展开讲讲有多蠢？", boss: "……以你的智商听不懂。" }],
-            "Empathy": [{ player: "当时是不是有什么迫不得已的原因", boss: "对嘛" }]
+            "Empathy": [{ player: "当时是不是有什么迫不得已的原因", boss: "你想多了。" }]
           }
         },
         {
           id: "p1_s3",
           text: "我当时就是一个小孩儿，被威胁了还能怎么办？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Threat", "Questioning"], 
+          weaknessTypes: ["Questioning", "Logic"], 
           breakFeedback: "BOSS：我承认没有严刑拷打，但我没栽赃！",
           interactions: {
-            "Threat": [
-              { player: "你这种满嘴谎话的小孩就欠揍。", boss: "来来来，打我呀" },
-              { player: "看来你是想尝尝真正的威胁。", boss: "..." },
-              { player: "再撒谎，我就让你见识下大人的手段。", boss: "..." },
-              { player: "没人打你？那我来做第一个。", boss: "..." }
-            ],
             "Questioning": [
               { player: "他怎么威胁你的？是上了酷刑还是差点杀了你？", boss: "……我受到了精神折磨。" },
-              { player: "具体的威胁内容是什么？说不出来吧。", boss: "..." },
-              { player: "那个距离，他根本威胁不到你。", boss: "..." },
-              { player: "你在撒谎，根本没有人威胁你。", boss: "..." }
+              { player: "被人威胁就要转手把朋友卖了？", boss: "我也是被逼的。" },
+              { player: "不会是有人跟你吼两句你就怕了吧？", boss: "站着说话不腰疼。" },
+              { player: "你到底是怎么被威胁的？", boss: "过程不想再回忆。" }
             ],
+            "Logic": [
+              { player: "你到底是被威胁还是主动进行了某些交易？", boss: "我没有！" },
+              { player: "也有小孩选择沉默和一起承担。", boss: "（不屑）一起承担一起上路？" },
+              { player: "威胁了可以认罪，用不着栽赃朋友！", boss: "我没有！他本来就参与了！" },
+              { player: "事到如今还在装小孩儿？小孩儿都替你丢脸！", boss: "随你怎么说。" }
+            ],
+            "Threat": [{ player: "你这种满嘴谎话的小孩就欠揍", boss: "来来来，打我呀" }],
             "Mockery": [{ player: "你可以像刚才一样装失忆呀，不是很擅长么？", boss: "你要这么说可就没意思了" }],
-            "Logic": [{ player: "威胁了可以认罪，用不着栽赃朋友！", boss: "我没有！他本来就参与了！" }],
             "Deceit": [{ player: "有时候说出来也是一种释怀", boss: "我不需要" }],
             "Empathy": [{ player: "我小时候也做过蠢事，现在也无法原谅自己", boss: "少来这套" }]
           }
@@ -139,19 +139,19 @@ export const gameConfig = {
           text: "我只是在大家面前说了事实，谁让他那么想离开……",
           hp: 40, maxHp: 40,
           weaknessTypes: ["Logic", "Deceit"], 
-          breakFeedback: "BOSS：我的确卖了他，谁让他参与了。",
+          breakFeedback: "BOSS：我的确卖了他，谁让他参与了",
           interactions: {
             "Logic": [
               { player: "那为什么你能全身而退？朋友却被关了10年？", boss: "鹰头看我态度良好……" },
-              { player: "既然是事实，为什么你要逃避？", boss: "..." },
-              { player: "事实是设计图是你画的。", boss: "..." },
-              { player: "你的供词和现场证据完全对不上。", boss: "..." }
+              { player: "你也参与了，那为什么能毫发无伤的离开？", boss: "我运气好一点点吧。" },
+              { player: "\"事实\"是你编了一个好剧本，字字诛心。", boss: "狐狸才是最能编故事的吧。" },
+              { player: "他想离开？是你怂恿他离开的吧？", boss: "……（捏紧图纸）" }
             ],
             "Deceit": [
-              { player: "是你想离开？还是他想离开？", boss: "你到底是干什么的" },
-              { player: "所谓的‘事实’到底是谁告诉你的？", boss: "..." },
-              { player: "为什么那个时间点说？", boss: "..." },
-              { player: "你到底想掩盖什么？", boss: "..." }
+              { player: "是你想离开？还是他想离开？", boss: "你到底要干什么？" },
+              { player: "你在大家面前说了什么？能再说一遍吗？", boss: "我记不得了。" },
+              { player: "你记得你说了所谓的\"事实\"后他的表情吗？", boss: "我记不起来了。" },
+              { player: "这些年你就是这么说服自己的吗？", boss: "我不知道你在说什么。" }
             ],
             "Threat": [{ player: "你不怕小狐狸趁你熟睡咬断你的脖子么？", boss: "我皮很糙，咬不动……" }],
             "Mockery": [{ player: "谎话说的这么淡定，在下真是佩服", boss: "别给脸不要脸" }],
@@ -170,23 +170,23 @@ export const gameConfig = {
           id: "p2_s1",
           text: "这个烂地儿大家都这样，再来一次我也只能这么选。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Threat", "Logic"], 
+          weaknessTypes: ["Questioning", "Logic"], 
           breakFeedback: "BOSS：好吧，我承认，这就是我的选择。",
           interactions: {
-            "Threat": [
-              { player: "再来一次，小狐狸见到你就给你炖了。", boss: "喝得有点多啊。" },
-              { player: "你这种想法会让你死得很惨。", boss: "..." },
-              { player: "这种选择会让你众叛亲离。", boss: "..." },
-              { player: "你以为你能一直这么侥幸吗？", boss: "..." }
+            "Questioning": [
+              { player: "大家为苟活背叛，也会像你这样被午夜梦回折磨？", boss: "我没有。" },
+              { player: "是吗？小狐狸会\"这样\"选？", boss: "他也没机会了。" },
+              { player: "\"大家\"是谁？我看只有你吧。", boss: "你懂个屁。" },
+              { player: "环境真的是原因吗？为什么大家都叫你背叛者？", boss: "你哪听来的？" }
             ],
             "Logic": [
               { player: "如果换你的朋友先背叛你，你会这么坦然吗？", boss: "……那我会认命。" },
-              { player: "环境不是你作恶的借口。", boss: "..." },
-              { player: "大家都这样，不代表这是对的。", boss: "..." },
-              { player: "你的选择是基于私利，而非环境。", boss: "..." }
+              { player: "\"只能这么选\"，那你现在在痛苦什么？", boss: "我现在过得挺好。" },
+              { player: "再来一次，你可捡不到这么好的机会逃走。", boss: "我没有逃。" },
+              { player: "若\"都这样\"，岛上为何只剩下你的\"传说\"？", boss: "你都哪儿听来的。" }
             ],
+            "Threat": [{ player: "再来一次，小狐狸见到你就给你炖了。", boss: "喝得有点多啊。" }],
             "Mockery": [{ player: "对，下次你跪得更快。", boss: "我不跟你掰扯！" }],
-            "Questioning": [{ player: "环境真的是原因吗？为什么大家都叫你背叛者？", boss: "你哪听来的？" }],
             "Deceit": [{ player: "也许吧，但你还是没有回答我为什么这么选。为什么？", boss: "你真是难缠啊。" }],
             "Empathy": [{ player: "我想，如果让你重新选择，你不会放弃朋友的，对吧？", boss: "我不知道。" }]
           }
@@ -195,50 +195,50 @@ export const gameConfig = {
           id: "p2_s2",
           text: "一个巴掌拍不响，他脑子里主意可多了。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Questioning", "Logic"], 
+          weaknessTypes: ["Mockery", "Questioning"], 
           breakFeedback: "BOSS：好吧，我当时确实很害怕",
           interactions: {
+            "Mockery": [
+              { player: "他真这么聪明的话，当初怎么没看出你怎么虚伪？", boss: "您别跟我抬杠。" },
+              { player: "对，他最疯狂的主意就是信了你。", boss: "（恼羞成怒）你！" },
+              { player: "对，跟懦夫一起逃跑还是很有勇气的。", boss: "我不是！" },
+              { player: "一个巴掌？你递刀的手可真响。", boss: "（恼羞成怒）你！" }
+            ],
             "Questioning": [
               { player: "那为什么鳄鱼说他做苦力全是为朋友的痴梦？", boss: "他……真这么说？" },
-              { player: "你在把责任推给受害者。", boss: "..." },
-              { player: "他的主意多，难道就是你背叛的理由？", boss: "..." },
-              { player: "你真的了解他脑子里的想法吗？", boss: "..." }
-            ],
-            "Logic": [
-              { player: "你栽赃设计图是他画的，真新鲜，狐狸比鸟还懂飞行？", boss: "……" },
-              { player: "巴掌拍不响？你可是狠狠打了他一巴掌。", boss: "..." },
-              { player: "他的主意都是为了带你飞。", boss: "..." },
-              { player: "这因果关系完全颠倒了。", boss: "..." }
+              { player: "他主意再多，可曾想过你会拿图纸当证物？", boss: "事情发生太快。" },
+              { player: "主意多，所以活该替你蹲十年？", boss: "那是他们的规矩。" },
+              { player: "那特赦令牌谁接的？", boss: "我走了更好，他也不想看到我。" }
             ],
             "Threat": [{ player: "信不信我现在给你脸上拍几个。", boss: "无能狂怒。" }],
-            "Mockery": [{ player: "他真这么聪明的话，当初怎么没看出你怎么虚伪？", boss: "您别跟我抬杠。" }],
-            "Deceit": [{ player: "他确实有很多主意，但没有一个是“背叛你”，不是么？", boss: "……" }],
+            "Logic": [{ player: "你栽赃设计图是他画的，真新鲜，狐狸比鸟还懂飞行？", boss: "……" }],
+            "Deceit": [{ player: "他确实有很多主意，但没有一个是\"背叛你\"，不是么？", boss: "……" }],
             "Empathy": [{ player: "你不需要掩饰，这么多年过去了，没有人在责怪你", boss: "……那他呢" }]
           }
         },
         {
           id: "p2_s3",
-          text: "我如果不答应，我明天就会死在那儿。",
+          text: "（嘶吼）我如果不答应，我明天就会死在那儿。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Logic", "Deceit"], 
-          breakFeedback: "BOSS：好吧，我想出去，为了自由，什么都可以牺牲",
+          weaknessTypes: ["Questioning", "Empathy"], 
+          breakFeedback: "BOSS：好吧，我想出去，我想出去，为了自由，什么都可以牺牲，你满意了吧",
           interactions: {
-            "Logic": [
-              { player: "所以朋友就是你能活的筹码？", boss: "他只是被关了10年。" },
-              { player: "用别人的命换你的命，这很公平？", boss: "..." },
-              { player: "你活下来了，带着一身的罪孽。", boss: "..." },
-              { player: "这不是生存游戏，这是谋杀。", boss: "..." }
+            "Questioning": [
+              { player: "你当时想的并不是如何活下来，而是如何出去！", boss: "能出去是最大的恩赐，谁不想？！" },
+              { player: "你不是挺会交易的吗？除了朋友的命就没别的筹码？", boss: "……" },
+              { player: "如果换做他告发你，你会原谅他吗？", boss: "……没发生的事儿我不知道。" },
+              { player: "这话鹰头真说过？还是你找台阶就下？", boss: "……" }
             ],
-            "Deceit": [
-              { player: "这句话是谁说的？是你自欺欺人吧？", boss: "……" },
-              { player: "你真的相信这句话吗？", boss: "..." },
-              { player: "死在那儿？还是活在愧疚里？", boss: "..." },
-              { player: "你在逃避真正的责任。", boss: "..." }
+            "Empathy": [
+              { player: "你愤怒了，你到底在恨谁？", boss: "所有人！包括我自己。" },
+              { player: "你很清楚他当时若知你会死，绝对不会袖手旁观。", boss: "……也许吧" },
+              { player: "那时的恐惧一定很真实。", boss: "（低声）冰冷彻骨……" },
+              { player: "怕死是本能，但用谁换命是选择。", boss: "（麻木）选？我有得选吗…" }
             ],
-            "Threat": [{ player: "你现在活着，但你已经死了。", boss: "……" }],
-            "Mockery": [{ player: "好一个贪生怕死的借口。", boss: "……" }],
-            "Questioning": [{ player: "谁告诉你明天就会死？", boss: "……" }],
-            "Empathy": [{ player: "恐惧让你做出了错误的选择，但现在可以弥补。", boss: "……" }]
+            "Threat": [{ player: "我明天就去问下鹰头，他是不是这么威胁你的。", boss: "别给我来这套。" }],
+            "Mockery": [{ player: "对，但如果你答应了，就能让朋友死在那儿。", boss: "你这是找茬儿呢？" }],
+            "Logic": [{ player: "所以朋友就是你能活的筹码？", boss: "他只是被关了十年。" }],
+            "Deceit": [{ player: "这句话是谁说的？是你自欺欺人吧？", boss: "……" }]
           }
         }
       ]
@@ -250,97 +250,102 @@ export const gameConfig = {
       statements: [
         {
           id: "p3_s1",
-          text: "我没错！为了自由，牺牲一点又怎么了？",
+          text: "我指认他时太害怕了，大脑一片空白，什么都记不得了",
           hp: 40, maxHp: 40,
           weaknessTypes: ["Mockery", "Questioning"], 
-          breakFeedback: "BOSS：我……我只是想飞……",
+          breakFeedback: "BOSS：是！我对不起他，但我也很痛苦！",
           interactions: {
             "Mockery": [
-              { player: "自由？你现在像个囚犯一样被困在过去。", boss: "……" },
-              { player: "牺牲朋友换来的自由，真是高尚啊。", boss: "..." },
-              { player: "你所谓的自由，就是背叛的代名词。", boss: "..." },
-              { player: "看看你现在的样子，哪里自由了？", boss: "..." }
+              { player: "你当时证词说得很溜啊，每个人都能听清楚。", boss: "……" },
+              { player: "空白到能精准背诵鹰守的台词？", boss: "他让我背了一晚上！" },
+              { player: "那设计图，怎就记得要拿出来？即兴发挥？", boss: "（手中图纸燃起）本能…是本能！" },
+              { player: "你真是天生的演员！", boss: "……" }
             ],
             "Questioning": [
-              { player: "那为什么你现在不敢看天空？", boss: "……" },
-              { player: "牺牲一点？那是别人的一生！", boss: "..." },
-              { player: "你真的得到了自由吗？", boss: "..." },
-              { player: "这种自由，你享受得了吗？", boss: "..." }
+              { player: "大脑空白，手却能将友谊的图纸举得那么稳？", boss: "（看着自己当年的手）稳…为了活…" },
+              { player: "是恐惧让你空白，还是自由的兴奋让你空白？", boss: "你！" },
+              { player: "害怕到能完成一场完美指证？", boss: "我也不想的！" },
+              { player: "他眼里的光熄灭时，你也空白吗？", boss: "别看我！" }
             ],
-            "Threat": [{ player: "你的自由到头了。", boss: "……" }],
-            "Logic": [{ player: "牺牲别人换取自由，这本身就是一种奴役。", boss: "……" }],
-            "Deceit": [{ player: "你心里很清楚，你错了。", boss: "……" }],
-            "Empathy": [{ player: "自由不是靠牺牲别人得来的，是靠承担责任。", boss: "……" }]
+            "Threat": [{ player: "快别再掩饰了，留给你的机会不多了。", boss: "你以为你是谁？" }],
+            "Logic": [{ player: "你早就想好背叛他了，你只是怕他会上来咬你吧？", boss: "……当时我只是个孩子" }],
+            "Deceit": [{ player: "具体是什么样的害怕？", boss: "既怕死，又怕面对其他人，尤其是他..." }],
+            "Empathy": [{ player: "你能回忆起指控小狐狸时他的眼神吗？你觉得当时他怎么想？", boss: "我不知道，我没敢看" }]
           }
         },
         {
           id: "p3_s2",
-          text: "我只是想飞……我只是想飞出去……",
+          text: "我离开的时候很痛苦，走得很艰难，我这辈子都步履沉重。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Empathy", "Logic"], 
-          breakFeedback: "BOSS：我……对不起……",
+          weaknessTypes: ["Mockery", "Logic"], 
+          breakFeedback: "BOSS：当时我有一丝...暗爽，好吧，我是垃圾",
           interactions: {
-            "Empathy": [
-              { player: "想飞没有错，但不能踩着朋友的翅膀飞。", boss: "……呜呜……" },
-              { player: "我知道你渴望自由，但方式错了。", boss: "..." },
-              { player: "现在回头还来得及，去面对他吧。", boss: "..." },
-              { player: "飞翔需要的是勇气，而不是背叛。", boss: "..." }
+            "Mockery": [
+              { player: "不该高兴吗，计谋得逞了？", boss: "你什么都不懂。" },
+              { player: "步履沉重？有他镣铐声音沉吗？", boss: "（暴怒）那不一样！" },
+              { player: "你的\"艰难\"，是拿着船票的艰难。", boss: "（羞愤）你懂什么！" },
+              { player: "沉重？是令牌太重，还是良心太重？", boss: "都重、都重……" }
             ],
             "Logic": [
-              { player: "你飞出去了，心却永远留在了牢笼里。", boss: "……" },
-              { player: "真正的飞翔是心灵的自由，你没有。", boss: "..." },
-              { player: "你用谎言编织的翅膀，飞不远的。", boss: "..." },
-              { player: "面对现实吧，你从未真正飞翔过。", boss: "..." }
+              { player: "沉重是因你每一步，都踩在当年的誓言上。", boss: "（低头看脚）誓言早就碎了。" },
+              { player: "当时除了痛苦，还有什么感觉？", boss: "我呼吸很急促，有一种诡异的兴奋感。" },
+              { player: "感觉艰难是因为不知道如何展开新生活吧？", boss: "……" },
+              { player: "这辈子都很沉重只是因为混的不好导致的吧？", boss: "你说什么就是什么吧" }
             ],
-            "Threat": [{ player: "飞？你只会坠落。", boss: "……" }],
-            "Mockery": [{ player: "飞出去？你现在只是在逃避。", boss: "……" }],
-            "Questioning": [{ player: "飞出去之后呢？你快乐吗？", boss: "……" }],
-            "Deceit": [{ player: "你骗了所有人，包括你自己。", boss: "……" }]
+            "Threat": [{ player: "如果你再演戏，我就让你另外一只翅膀折掉！", boss: "别激怒我。" }],
+            "Questioning": [{ player: "可是渡口的雾狼说你虽然一步三回头，但一刻没停下。", boss: "那是因为我生来就呆在这里。" }],
+            "Deceit": [{ player: "回望悬崖上被关的小狐狸，你什么感觉？", boss: "胸口很痛，但，狐狸不需要飞吧。" }],
+            "Empathy": [{ player: "你希望悬崖上的狐狸祝福你吗？", boss: "……我不奢望他祝福，只希望有那么一瞬间他理解我。" }]
           }
         },
         {
           id: "p3_s3",
-          text: "我……我该怎么办？",
+          text: "我已经混成这样了，人生已经结束了，你为什么还揪住不放？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Empathy", "Logic"], 
-          breakFeedback: "BOSS：我会去自首的。",
+          weaknessTypes: ["Mockery", "Empathy"], 
+          breakFeedback: "BOSS：凭什么，凭什么他们可以，我不可以，我恨他们，恨所有人。",
           interactions: {
+            "Mockery": [
+              { player: "你的翅膀都坏了，为什么还要装饰成可以煽动的样子？", boss: "不要再说了...否则我是什么？" },
+              { player: "结束可是对你的恩赐啊！", boss: "（被激怒）报应！我活该！" },
+              { player: "揪住不放？是当年的你，没放过他。", boss: "（语塞）我……" },
+              { player: "你至少还能\"混\"，他在石室里连\"混\"的资格都没有。", boss: "（跪地）别说了…" }
+            ],
             "Empathy": [
-              { player: "去道歉，去承担你该承担的。", boss: "……好。" },
-              { player: "面对他，说出真相。", boss: "..." },
-              { player: "只要你肯回头，一切都不晚。", boss: "..." },
-              { player: "我们会陪着你，去面对这一切。", boss: "..." }
+              { player: "如果看到同类在你面前飞，你什么感受？", boss: "我恨他们……能飞" },
+              { player: "我揪住的，是那个曾经给朋友讲什么是飞翔的你，他在哪？", boss: "（指向自己心口，泣不成声）死了…被我杀了……" },
+              { player: "你的人生看似结束，他的却真正被偷走了十年。", boss: "（崩溃认罪）我是贼…" },
+              { player: "混成这样，因为灵魂一直停在悬崖那夜。", boss: "（流泪）是…我从来没离开过……" }
             ],
-            "Logic": [
-              { player: "只有真相能让你解脱。", boss: "……" },
-              { player: "逃避解决不了问题，面对才是出路。", boss: "..." },
-              { player: "去把欠他的十年还给他。", boss: "..." },
-              { player: "这是你唯一能做的事。", boss: "..." }
-            ],
-            "Threat": [{ player: "别再让我看到你逃避。", boss: "……" }],
-            "Mockery": [{ player: "现在知道问怎么办了？早干嘛去了。", boss: "……" }],
-            "Questioning": [{ player: "你自己心里清楚该怎么做。", boss: "……" }],
-            "Deceit": [{ player: "别再骗自己了，去行动吧。", boss: "……" }]
+            "Threat": [{ player: "你不把话抖落干净我会让你永远夜不能寐！", boss: "爱怎么着怎么着。" }],
+            "Questioning": [{ player: "你混成什么样了？", boss: "梦想最终破灭了，你看，我的翅膀已经坏掉了" }],
+            "Logic": [{ player: "为什么觉得人生结束了？不是逃脱狗牙岛了吗？", boss: "……对鸟来说，乘船离开很讽刺" }],
+            "Deceit": [{ player: "为什么你手里有不断燃烧的羊皮图纸？", boss: "看它燃烧虽然痛苦，但我安心，没人知道我的秘密了。" }]
           }
         },
         {
           id: "p3_s4",
-          text: "（沉默）",
+          text: "哈哈哈哈哈哈要听点真心话吗？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Empathy"], 
-          breakFeedback: "BOSS：谢谢你……",
+          weaknessTypes: ["Deceit", "Empathy"], 
+          breakFeedback: "BOSS：我想对他说对不起，但我要告诉他\"我不后悔出卖你\"",
           interactions: {
-            "Empathy": [
-              { player: "去吧，他在等你。", boss: "（点头）" },
-              { player: "祝你好运。", boss: "..." },
-              { player: "你终于自由了。", boss: "..." },
-              { player: "再见，蝉羽。", boss: "..." }
+            "Deceit": [
+              { player: "已经到这儿了，你可以全部释放出来", boss: "我以为我会后悔，但这么多年了，并没有" },
+              { player: "若重来，你会松手让令牌落下吗？", boss: "我希望自己没有认识任何一个朋友。" },
+              { player: "你的真心话，是恨鹰头，还是恨逼你背叛的自己？", boss: "（彻悟，平静）恨自己…懦弱卑鄙的自己。" },
+              { player: "指认他时，你心里到底在喊什么？", boss: "（嘶喊）快认罪！这样我就能活了！" }
             ],
-            "Logic": [{ player: "沉默代表你已经想通了。", boss: "..." }],
-            "Threat": [{ player: "别让我失望。", boss: "..." }],
-            "Mockery": [{ player: "终于像个样了。", boss: "..." }],
-            "Questioning": [{ player: "准备好了吗？", boss: "..." }],
-            "Deceit": [{ player: "去面对你的命运吧。", boss: "..." }]
+            "Empathy": [
+              { player: "我知道这些话你憋在心里太久了，说吧，我会听到最后一秒", boss: "我背叛了他，只有那一刻，我觉得自己真的在活着" },
+              { player: "我想听，那个星空下没说完的真心话。", boss: "鸟儿……生来就该飞的。" },
+              { player: "你在笑什么？", boss: "我没想到自己真的活成了一个笑话。" },
+              { player: "你想跟小狐狸说什么？", boss: "不要再相信任何一只想飞的鸟。" }
+            ],
+            "Threat": [{ player: "别给我发疯！", boss: "你怕什么哈哈哈哈哈！" }],
+            "Mockery": [{ player: "你有哪句话是真的？", boss: "你有逼疯人的本事啊！" }],
+            "Questioning": [{ player: "你还有什么没说么？", boss: "跟你说话真没意思" }],
+            "Logic": [{ player: "刚才不是真话？", boss: "哈哈哈哈哈当然，都不够真。" }]
           }
         }
       ]
