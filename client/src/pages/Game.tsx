@@ -277,7 +277,7 @@ export default function Game() {
         ))}
         
         {/* BG Layers */}
-        <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('/images/background.png')" }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: `url('${import.meta.env.BASE_URL}images/background.png')` }} />
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.25)_50%)] z-10 bg-[length:100%_2px]" />
 
         {/* --- Top HUD --- */}
