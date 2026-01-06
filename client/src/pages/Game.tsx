@@ -148,9 +148,11 @@ export default function Game() {
   const [bossCurrentHP, setBossCurrentHP] = useState(totalMaxHP);
   const [ap, setAp] = useState(30);
   const [isWeaknessHidden, setIsWeaknessHidden] = useState(false);
+  const [gameMode, setGameMode] = useState<'CLASSIC' | 'EVO'>('EVO');
 
   const [currentCard, setCurrentCard] = useState<PlayableCard | null>(null);
   const [currentOptions, setCurrentOptions] = useState<Option[]>([]);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   
   const [isActing, setIsActing] = useState(false);
   const [diceRolls, setDiceRolls] = useState<number[]>([]);
@@ -208,8 +210,19 @@ export default function Game() {
     setTimeout(() => setFloatingText(p => p.filter(t => t.id !== id)), 2500);
   };
 
-  const handleOptionSelect = (option: Option, e: React.MouseEvent) => {
-    if (isActing || !currentCard || ap <= 0) return;
+  const handleOptionSelect = (option: Option) => {
+    if (isActing) return;
+    
+    // 切换选中状态
+    if (selectedOption?.id === option.id) {
+      setSelectedOption(null);
+    } else {
+      setSelectedOption(option);
+    }
+  };
+
+  const handleAttack = (e: React.MouseEvent) => {
+    if (isActing || !currentCard || !selectedOption || ap <= 0) return;
     
     setIsActing(true);
     setAp(p => p - 1);
@@ -223,34 +236,48 @@ export default function Game() {
     const weakness = activeStatement.weakness;
     let baseDamage = 0;
     let critDamage = 0;
+    let critCount = 0;
     let isBreak = false;
     let damageLabel = "MISS";
+    let color = "#aaaaaa";
+    let sizeClass = "text-3xl";
     
     // A. 基础伤害（话术匹配度）
-    if (!option.isEffective) {
-      // BAD/MISS
+    const isAttributeMatch = selectedOption.type === weakness.type;
+    
+    if (!selectedOption.isEffective) {
+      // 无效选项：MISS
       baseDamage = 0;
-      damageLabel = "MISS";
-    } else if (option.type === weakness.type) {
-      // PERFECT（完美回击）
+    } else if (isAttributeMatch) {
+      // 属性匹配：基础伤害 20
       baseDamage = 20;
-      damageLabel = "PERFECT";
     } else {
-      // GOOD（普通回击）
+      // 属性未匹配但有效：基础伤害 10
       baseDamage = 10;
-      damageLabel = "GOOD";
     }
     
-    // B. 爆发伤害（骰子运气）
-    let critCount = 0;
-    if (option.type === weakness.type) {
-      // 只有属性匹配时才检查骰子
-      critCount = rolls.filter(roll => roll === weakness.targetPoint).length;
-      critDamage = critCount * 40;
-      
-      if (critCount > 0) {
-        damageLabel = "CRIT!";
-        isBreak = true;
+    // B. 爆发伤害（骰子运气）- 根据模式决定逻辑
+    if (gameMode === 'EVO') {
+      // 进化大运模式：解耦骰子检测
+      if (selectedOption.isEffective) {
+        // 只要是有效选项，就计算骰子匹配数
+        critCount = rolls.filter(roll => roll === weakness.targetPoint).length;
+        critDamage = critCount * 40;
+        
+        // 只要有骰子命中，就触发震动和闪光
+        if (critCount > 0) {
+          isBreak = true;
+        }
+      }
+    } else {
+      // 经典策略模式：只有属性匹配时才检查骰子
+      if (isAttributeMatch) {
+        critCount = rolls.filter(roll => roll === weakness.targetPoint).length;
+        critDamage = critCount * 40;
+        
+        if (critCount > 0) {
+          isBreak = true;
+        }
       }
     }
     
@@ -278,29 +305,36 @@ export default function Game() {
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top;
 
-      // 根据结果生成飘字
-      let color = "#aaaaaa";
-      let sizeClass = "text-3xl";
+      // C. 多维度反馈逻辑（按优先级设置 damageLabel、color、sizeClass）
       let damageText = "0";
-
+      
       if (totalDamage === 0) {
-        // MISS
+        // 无效选项：MISS
+        damageLabel = "MISS";
         color = "#aaaaaa";
         sizeClass = "text-3xl";
         damageText = "0";
-      } else if (critCount > 0) {
-        // CRIT（有骰子命中）
-        color = "#ff0055"; // 霓虹红
+      } else if (isAttributeMatch && critCount > 0) {
+        // 属性匹配 + 骰子命中：PERFECT CRIT!
+        damageLabel = "PERFECT CRIT!";
+        color = "#ffcc00"; // 金色
         sizeClass = "text-6xl";
         damageText = `-${totalDamage}`;
-        damageLabel = `CRIT! +${critDamage}`;
-      } else if (baseDamage === 20) {
-        // PERFECT
+      } else if (!isAttributeMatch && critCount > 0 && gameMode === 'EVO') {
+        // 属性未匹配 + 骰子命中：LUCKY CRIT!（仅进化大运模式）
+        damageLabel = "LUCKY CRIT!";
+        color = "#ff8800"; // 橙色
+        sizeClass = "text-5xl";
+        damageText = `-${totalDamage}`;
+      } else if (isAttributeMatch && critCount === 0) {
+        // 属性匹配 + 骰子未中：PERFECT
+        damageLabel = "PERFECT";
         color = "#39ff14"; // 霓虹绿
         sizeClass = "text-5xl";
         damageText = `-${totalDamage}`;
-      } else if (baseDamage === 10) {
-        // GOOD
+      } else {
+        // 属性未匹配 + 骰子未中：GOOD
+        damageLabel = "GOOD";
         color = "#00ffff"; // 霓虹蓝
         sizeClass = "text-4xl";
         damageText = `-${totalDamage}`;
@@ -316,15 +350,18 @@ export default function Game() {
       }
 
       // 根据选项的 type 获取对应的交互
-      if (option.isEffective) {
-        const cardInteractions = activeStatement.interactions?.[option.type];
+      if (selectedOption.isEffective) {
+        const cardInteractions = activeStatement.interactions?.[selectedOption.type];
         if (cardInteractions) {
-          const interaction = cardInteractions.find(i => i.player === option.text);
+          const interaction = cardInteractions.find(i => i.player === selectedOption.text);
           if (interaction) setBossReply(interaction.boss);
         }
       } else {
          setBossReply("……");
       }
+
+      // 重置选中状态
+      setSelectedOption(null);
 
       // 4. 判断胜负或下一轮
       if (stmt.hp <= 0) {
@@ -407,7 +444,17 @@ export default function Game() {
           {/* 血条容器 */}
           <div className="relative">
             <Progress 
-              value={(bossCurrentHP / totalMaxHP) * 100} 
+              value={(() => {
+                // 计算当前阶段的总血量
+                const currentPhaseMaxHP = statements.reduce((sum, stmt) => sum + stmt.maxHp, 0);
+                // 计算当前阶段的剩余血量
+                const currentPhaseRemainingHP = statements.reduce((sum, stmt) => sum + stmt.hp, 0);
+                // 总阶段数
+                const totalPhases = gameConfig.phases.length;
+                // 视觉进度公式：(后面还没到的完整阶段数 + 当前阶段的剩余百分比) / 总份数
+                const visualProgress = ((totalPhases - 1 - currentPhaseIndex) + (currentPhaseRemainingHP / currentPhaseMaxHP)) / totalPhases * 100;
+                return visualProgress;
+              })()} 
               className="h-4 bg-gray-900 border border-[#b026ff]/50 [&>div]:bg-[#b026ff]" 
             />
             
@@ -437,6 +484,17 @@ export default function Game() {
         </div>
         
         <div className="flex gap-3 ml-6">
+          <button
+            onClick={() => setGameMode(prev => prev === 'EVO' ? 'CLASSIC' : 'EVO')}
+            className={`
+              flex items-center gap-2 px-4 py-2 border-2 font-mono font-bold text-lg transition-all cursor-pointer
+              ${gameMode === 'EVO' ? "border-[#ffcc00] text-[#ffcc00]" : "border-[#00ffff] text-[#00ffff]"}
+              hover:opacity-80
+            `}
+          >
+            <Sparkles size={20} />
+            {gameMode === 'EVO' ? '暴击只匹配数字' : '暴击匹配弱点+数字'}
+          </button>
           <button
             onClick={() => setIsWeaknessHidden(!isWeaknessHidden)}
             className={`
@@ -497,11 +555,25 @@ export default function Game() {
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -50, opacity: 0 }}
-                className="relative p-8 bg-black/80 backdrop-blur border-l-4 border-[#00ffff] transition-all duration-200"
+                onClick={handleAttack}
+                className={`
+                  relative p-8 bg-black/80 backdrop-blur border-l-4 transition-all duration-200
+                  ${selectedOption && !isActing 
+                    ? 'border-[#39ff14] cursor-pointer hover:bg-black/90 hover:shadow-[0_0_30px_rgba(57,255,20,0.4)] animate-pulse' 
+                    : 'border-[#00ffff]'
+                  }
+                `}
               >
                 <p className="text-white font-mono text-3xl md:text-4xl leading-tight mb-4">
                   "{activeStatement.text}"
                 </p>
+                
+                {/* 攻击提示 */}
+                {selectedOption && !isActing && (
+                  <div className="absolute -bottom-8 left-0 text-[#39ff14] text-sm font-mono animate-bounce">
+                    ▲ 点击确认攻击
+                  </div>
+                )}
                 
                 {/* HP 条 */}
                 <div className="h-2 w-full bg-gray-800">
@@ -604,9 +676,10 @@ export default function Game() {
                 <OptionBubble 
                   key={opt.id}
                   option={opt} 
-                  onClick={(e) => handleOptionSelect(opt, e)}
+                  onClick={() => handleOptionSelect(opt)}
                   disabled={isActing}
                   index={idx}
+                  isSelected={selectedOption?.id === opt.id}
                 />
               )
             ))}
@@ -674,7 +747,7 @@ export default function Game() {
 }
 
 // 子组件：选项气泡
-function OptionBubble({ option, onClick, disabled, index }: { option: Option, onClick: (e:React.MouseEvent)=>void, disabled: boolean, index: number }) {
+function OptionBubble({ option, onClick, disabled, index, isSelected }: { option: Option, onClick: ()=>void, disabled: boolean, index: number, isSelected: boolean }) {
   // 获取属性图标
   const getTypeIcon = (type: CardType): string => {
     const typeConfig = CARD_TYPES.find(t => t.type === type);
@@ -692,9 +765,12 @@ function OptionBubble({ option, onClick, disabled, index }: { option: Option, on
       disabled={disabled}
       className={`
         relative max-w-md px-6 py-4 cursor-pointer
-        bg-black/90 border-2 border-gray-700 rounded-2xl
-        hover:border-[#00ffff] hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]
+        bg-black/90 border-2 rounded-2xl
         transition-all group disabled:opacity-50 disabled:cursor-not-allowed
+        ${isSelected 
+          ? 'border-[#00ffff] shadow-[0_0_30px_rgba(0,255,255,0.6)] animate-pulse bg-[#00ffff]/10' 
+          : 'border-gray-700 hover:border-[#00ffff] hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]'
+        }
       `}
     >
       <div className="text-white text-lg font-mono text-left leading-relaxed flex items-start gap-2">
@@ -703,13 +779,17 @@ function OptionBubble({ option, onClick, disabled, index }: { option: Option, on
       </div>
       
       {/* 气泡尖角 */}
-      <div className="absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 w-0 h-0 
+      <div className={`
+        absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 w-0 h-0 
         border-t-8 border-t-transparent 
-        border-r-8 border-r-gray-700 
+        border-r-8 
         border-b-8 border-b-transparent
-        group-hover:border-r-[#00ffff]
         transition-colors
-      "></div>
+        ${isSelected 
+          ? 'border-r-[#00ffff]' 
+          : 'border-r-gray-700 group-hover:border-r-[#00ffff]'
+        }
+      `}></div>
     </motion.button>
   )
 }
