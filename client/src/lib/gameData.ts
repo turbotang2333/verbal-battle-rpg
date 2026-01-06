@@ -1,10 +1,26 @@
+// 文件路径: src/lib/gameData.ts
+
 export type CardType = "Threat" | "Mockery" | "Questioning" | "Logic" | "Empathy" | "Deceit";
+export type Rarity = "R" | "SR" | "SSR";
 
 export interface CardConfig {
   type: CardType;
   label: string;
-  color: string;
+  color: string; // Tailwind class for background
   icon: string;
+  borderColor: string;
+}
+
+export interface PlayableCard {
+  id: string;
+  rarity: Rarity;
+  types: CardType[]; // 支持多个属性
+  diceCount: number; // 这张卡能扔几个骰子，等于 types.length
+  characterId: "purple_fox" | "green_face" | "red_man"; // 角色归属
+  label: string;
+  icon: string;
+  color: string;
+  borderColor: string;
 }
 
 export interface Interaction {
@@ -12,14 +28,19 @@ export interface Interaction {
   boss: string;
 }
 
+export interface WeaknessRequirement {
+  type: CardType;
+  count: number; // 需要几个骰子命中才能BREAK
+  targetPoint: number; // 目标点数 (1-6)
+}
+
 export interface Statement {
   id: string;
   text: string;
   hp: number;
   maxHp: number;
-  weaknessTypes: CardType[]; 
+  weakness: WeaknessRequirement; // 核心改动：弱点现在需要具体的骰子数量
   breakFeedback: string;
-  // Interaction supports array for variety (4 variants for weaknesses)
   interactions: Partial<Record<CardType, Interaction[]>>; 
 }
 
@@ -30,30 +51,221 @@ export interface GamePhase {
   statements: Statement[];
 }
 
-// UI Config: Text Labels Only, No Emojis
+// 基础卡牌配置
 export const CARD_TYPES: CardConfig[] = [
-  { type: "Threat", label: "威胁", icon: "⚔️", color: "bg-red-900 border-red-500" },
-  { type: "Mockery", label: "嘲讽", icon: "🤡", color: "bg-purple-900 border-purple-500" },
-  { type: "Questioning", label: "质疑", icon: "❓", color: "bg-blue-900 border-blue-500" },
-  { type: "Logic", label: "逻辑", icon: "🧠", color: "bg-cyan-900 border-cyan-500" },
-  { type: "Empathy", label: "共情", icon: "❤️", color: "bg-pink-900 border-pink-500" },
-  { type: "Deceit", label: "追问", icon: "🎭", color: "bg-green-900 border-green-500" },
+  { type: "Threat", label: "威胁", icon: "⚔️", color: "bg-red-950", borderColor: "border-red-600" },
+  { type: "Mockery", label: "嘲讽", icon: "🤡", color: "bg-purple-950", borderColor: "border-purple-600" },
+  { type: "Questioning", label: "质疑", icon: "❓", color: "bg-blue-950", borderColor: "border-blue-600" },
+  { type: "Logic", label: "逻辑", icon: "🧠", color: "bg-cyan-950", borderColor: "border-cyan-600" },
+  { type: "Empathy", label: "共情", icon: "❤️", color: "bg-pink-950", borderColor: "border-pink-600" },
+  { type: "Deceit", label: "追问", icon: "🎭", color: "bg-green-950", borderColor: "border-green-600" },
 ];
 
-// Group C: General Fillers (Low Damage)
-export const GENERAL_RESPONSES: Record<CardType, string[]> = {
-  Threat: ["别逼我动用手段。", "你清楚后果的。", "我的忍耐是有限度的。", "这种态度救不了你。"],
-  Mockery: ["真是可笑的逻辑。", "你就在这自我感动吧。", "这种话连你自己都不信吧？", "拙劣的表演。"],
-  Questioning: ["这就是你的理由？", "真的只是这样吗？", "你在隐瞒什么？", "这解释不通。"],
-  Logic: ["你的话前后矛盾。", "这不符合常理。", "没有任何证据支持你。", "逻辑漏洞百出。"],
-  Deceit: ["看着我的眼睛再说一遍。", "还有别的吗？", "别想转移话题。", "再多说一点细节。"],
-  Empathy: ["我理解你的感受。", "放松点，慢慢说。", "我们不是敌人。", "没关系的，我在听。"]
+// 稀有度配置：决定骰子数量
+export const RARITY_CONFIG: Record<Rarity, { dice: number; validOptionWeight: number; label: string }> = {
+  "R": { dice: 1, validOptionWeight: 1, label: "混乱思维" },    // 1个骰子，1个真话，2个废话
+  "SR": { dice: 2, validOptionWeight: 2, label: "清晰思维" },   // 2个骰子，2个真话，1个废话
+  "SSR": { dice: 3, validOptionWeight: 3, label: "绝对灵感" }   // 3个骰子，3个真话
 };
 
-// Full Game Script (4-3-4 Structure)
+// 按属性分类的干扰项池（废话库）
+export const FILLER_OPTIONS: Record<CardType, string[]> = {
+  "Threat": [
+    "你给我等着...",
+    "别逼我发火。",
+    "后果自负。",
+    "你最好想清楚。",
+    "这拳头可不长眼。",
+    "我数到三。"
+  ],
+  "Mockery": [
+    "就这？",
+    "这就很尴尬了。",
+    "别逗我笑了。",
+    "演得不错。",
+    "真是有趣的笑话。",
+    "你是在表演吗？"
+  ],
+  "Questioning": [
+    "是吗？",
+    "我不这么认为。",
+    "你有证据吗？",
+    "这解释不通。",
+    "真的如此吗？",
+    "这就奇怪了。"
+  ],
+  "Logic": [
+    "从理论上讲...",
+    "这不合逻辑。",
+    "让我们理性分析。",
+    "数据不会说谎。",
+    "这里有个矛盾。",
+    "根据过往经验..."
+  ],
+  "Empathy": [
+    "我能理解。",
+    "也许你是对的。",
+    "别太难过。",
+    "我感同身受。",
+    "慢慢来，别急。",
+    "我知道这很难。"
+  ],
+  "Deceit": [
+    "那个...",
+    "让我想想。",
+    "我忘记了。",
+    "换个话题吧。",
+    "其实...",
+    "也许吧..."
+  ]
+};
+
+// 固定卡池：12 张卡牌
+export const INITIAL_DECK: PlayableCard[] = [
+  // === 角色1：紫狐狸 (Purple Fox) - 压迫者风格 ===
+  {
+    id: "purple_fox_ssr",
+    rarity: "SSR",
+    types: ["Threat", "Threat", "Threat"],
+    diceCount: 3,
+    characterId: "purple_fox",
+    label: "绝对压制",
+    icon: "⚔️",
+    color: "bg-purple-950",
+    borderColor: "border-purple-600"
+  },
+  {
+    id: "purple_fox_sr",
+    rarity: "SR",
+    types: ["Questioning", "Questioning"],
+    diceCount: 2,
+    characterId: "purple_fox",
+    label: "灵魂拷问",
+    icon: "❓",
+    color: "bg-purple-950",
+    borderColor: "border-purple-600"
+  },
+  {
+    id: "purple_fox_r1",
+    rarity: "R",
+    types: ["Threat"],
+    diceCount: 1,
+    characterId: "purple_fox",
+    label: "威胁",
+    icon: "⚔️",
+    color: "bg-purple-950",
+    borderColor: "border-purple-600"
+  },
+  {
+    id: "purple_fox_r2",
+    rarity: "R",
+    types: ["Questioning"],
+    diceCount: 1,
+    characterId: "purple_fox",
+    label: "质疑",
+    icon: "❓",
+    color: "bg-purple-950",
+    borderColor: "border-purple-600"
+  },
+
+  // === 角色2：绿双面 (Green Face) - 破局者风格 ===
+  {
+    id: "green_face_ssr",
+    rarity: "SSR",
+    types: ["Logic", "Logic", "Empathy"],
+    diceCount: 3,
+    characterId: "green_face",
+    label: "理性面具",
+    icon: "🧠",
+    color: "bg-emerald-950",
+    borderColor: "border-emerald-600"
+  },
+  {
+    id: "green_face_sr",
+    rarity: "SR",
+    types: ["Empathy", "Empathy"],
+    diceCount: 2,
+    characterId: "green_face",
+    label: "虚伪共鸣",
+    icon: "❤️",
+    color: "bg-emerald-950",
+    borderColor: "border-emerald-600"
+  },
+  {
+    id: "green_face_r1",
+    rarity: "R",
+    types: ["Logic"],
+    diceCount: 1,
+    characterId: "green_face",
+    label: "逻辑",
+    icon: "🧠",
+    color: "bg-emerald-950",
+    borderColor: "border-emerald-600"
+  },
+  {
+    id: "green_face_r2",
+    rarity: "R",
+    types: ["Threat"],
+    diceCount: 1,
+    characterId: "green_face",
+    label: "冷眼",
+    icon: "⚔️",
+    color: "bg-emerald-950",
+    borderColor: "border-emerald-600"
+  },
+
+  // === 角色3：红发男 (Red Man) - 搅局者风格 ===
+  {
+    id: "red_man_ssr",
+    rarity: "SSR",
+    types: ["Deceit", "Deceit", "Mockery"],
+    diceCount: 3,
+    characterId: "red_man",
+    label: "狂笑之徒",
+    icon: "🎭",
+    color: "bg-red-950",
+    borderColor: "border-red-600"
+  },
+  {
+    id: "red_man_sr",
+    rarity: "SR",
+    types: ["Mockery", "Mockery"],
+    diceCount: 2,
+    characterId: "red_man",
+    label: "无情嘲弄",
+    icon: "🤡",
+    color: "bg-red-950",
+    borderColor: "border-red-600"
+  },
+  {
+    id: "red_man_r1",
+    rarity: "R",
+    types: ["Deceit"],
+    diceCount: 1,
+    characterId: "red_man",
+    label: "追问",
+    icon: "🎭",
+    color: "bg-red-950",
+    borderColor: "border-red-600"
+  },
+  {
+    id: "red_man_r2",
+    rarity: "R",
+    types: ["Logic"],
+    diceCount: 1,
+    characterId: "red_man",
+    label: "诡辩",
+    icon: "🧠",
+    color: "bg-red-950",
+    borderColor: "border-red-600"
+  }
+];
+
+// 游戏关卡数据（完整 3 阶段 / 11 关）
 export const gameConfig = {
-  initialBossHP: 100, // Visual only, real progress tracks statements
+  initialBossHP: 100,
   phases: [
+    // --- Phase 1 ---
     {
       id: 1,
       title: "目标：让蝉羽回想起当年做了什么",
@@ -63,7 +275,8 @@ export const gameConfig = {
           id: "p1_s1",
           text: "太久的事情想不起来了。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Threat", "Questioning"], 
+          // 难度设定：入门 (1个骰子即可Break)
+          weakness: { type: "Threat", count: 1, targetPoint: 4 }, 
           breakFeedback: "BOSS：我想起来了... 这个烂地儿大家都这样。",
           interactions: {
             "Threat": [
@@ -88,7 +301,8 @@ export const gameConfig = {
           id: "p1_s2",
           text: "我当年是告发了他，但那不是小孩经常做的蠢事吗？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Questioning", "Logic"], 
+          // 难度设定：简单 (需要1个骰子)
+          weakness: { type: "Logic", count: 1, targetPoint: 3 }, 
           breakFeedback: "BOSS：难道我做错了吗？",
           interactions: {
             "Questioning": [
@@ -113,7 +327,8 @@ export const gameConfig = {
           id: "p1_s3",
           text: "我当时就是一个小孩儿，被威胁了还能怎么办？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Questioning", "Logic"], 
+          // 难度设定：普通 (需要2个骰子，R卡无法Break，需要SR)
+          weakness: { type: "Questioning", count: 2, targetPoint: 5 }, 
           breakFeedback: "BOSS：我承认没有严刑拷打，但我没栽赃！",
           interactions: {
             "Questioning": [
@@ -138,7 +353,8 @@ export const gameConfig = {
           id: "p1_s4",
           text: "我只是在大家面前说了事实，谁让他那么想离开……",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Logic", "Deceit"], 
+          // 难度设定：普通 (需要2个骰子)
+          weakness: { type: "Deceit", count: 2, targetPoint: 6 }, 
           breakFeedback: "BOSS：我的确卖了他，谁让他参与了",
           interactions: {
             "Logic": [
@@ -161,6 +377,7 @@ export const gameConfig = {
         }
       ]
     },
+    // --- Phase 2 ---
     {
       id: 2,
       title: "目标：为什么当年选择背叛、栽赃？",
@@ -170,7 +387,8 @@ export const gameConfig = {
           id: "p2_s1",
           text: "这个烂地儿大家都这样，再来一次我也只能这么选。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Questioning", "Logic"], 
+          // 难度设定：普通 (2骰子)
+          weakness: { type: "Questioning", count: 2, targetPoint: 4 }, 
           breakFeedback: "BOSS：好吧，我承认，这就是我的选择。",
           interactions: {
             "Questioning": [
@@ -195,7 +413,7 @@ export const gameConfig = {
           id: "p2_s2",
           text: "一个巴掌拍不响，他脑子里主意可多了。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Mockery", "Questioning"], 
+          weakness: { type: "Mockery", count: 2, targetPoint: 5 }, 
           breakFeedback: "BOSS：好吧，我当时确实很害怕",
           interactions: {
             "Mockery": [
@@ -220,7 +438,7 @@ export const gameConfig = {
           id: "p2_s3",
           text: "（嘶吼）我如果不答应，我明天就会死在那儿。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Questioning", "Empathy"], 
+          weakness: { type: "Empathy", count: 2, targetPoint: 3 }, 
           breakFeedback: "BOSS：好吧，我想出去，我想出去，为了自由，什么都可以牺牲，你满意了吧",
           interactions: {
             "Questioning": [
@@ -243,6 +461,7 @@ export const gameConfig = {
         }
       ]
     },
+    // --- Phase 3 ---
     {
       id: 3,
       title: "目标：让蝉羽面对真正的自己",
@@ -252,7 +471,8 @@ export const gameConfig = {
           id: "p3_s1",
           text: "我指认他时太害怕了，大脑一片空白，什么都记不得了",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Mockery", "Questioning"], 
+          // 难度设定：困难 (开始出现需要3个骰子，必须SSR或运气极好的情况，建议多试几次)
+          weakness: { type: "Mockery", count: 2, targetPoint: 6 }, 
           breakFeedback: "BOSS：是！我对不起他，但我也很痛苦！",
           interactions: {
             "Mockery": [
@@ -277,7 +497,7 @@ export const gameConfig = {
           id: "p3_s2",
           text: "我离开的时候很痛苦，走得很艰难，我这辈子都步履沉重。",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Mockery", "Logic"], 
+          weakness: { type: "Logic", count: 3, targetPoint: 5 },
           breakFeedback: "BOSS：当时我有一丝...暗爽，好吧，我是垃圾",
           interactions: {
             "Mockery": [
@@ -302,7 +522,7 @@ export const gameConfig = {
           id: "p3_s3",
           text: "我已经混成这样了，人生已经结束了，你为什么还揪住不放？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Mockery", "Empathy"], 
+          weakness: { type: "Empathy", count: 3, targetPoint: 4 },
           breakFeedback: "BOSS：凭什么，凭什么他们可以，我不可以，我恨他们，恨所有人。",
           interactions: {
             "Mockery": [
@@ -327,7 +547,7 @@ export const gameConfig = {
           id: "p3_s4",
           text: "哈哈哈哈哈哈要听点真心话吗？",
           hp: 40, maxHp: 40,
-          weaknessTypes: ["Deceit", "Empathy"], 
+          weakness: { type: "Deceit", count: 3, targetPoint: 6 },
           breakFeedback: "BOSS：我想对他说对不起，但我要告诉他\"我不后悔出卖你\"",
           interactions: {
             "Deceit": [
