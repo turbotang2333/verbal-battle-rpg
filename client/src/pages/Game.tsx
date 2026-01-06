@@ -13,7 +13,7 @@ import {
 } from "@/lib/gameData";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Zap, Dices, AlertTriangle, RefreshCw, User, Sparkles, Ghost, Eye, EyeOff } from "lucide-react";
+import { Zap, Dices, AlertTriangle, RefreshCw, User, Sparkles, Ghost, Eye, EyeOff, Volume2, VolumeX } from "lucide-react";
 
 // --- 统一角色图标组件 ---
 const CharacterIcon = ({ size = 48, className = "" }: { size?: number, className?: string }) => (
@@ -149,6 +149,9 @@ export default function Game() {
   const [ap, setAp] = useState(30);
   const [isWeaknessHidden, setIsWeaknessHidden] = useState(false);
   const [gameMode, setGameMode] = useState<'CLASSIC' | 'EVO'>('EVO');
+  const [isMusicEnabled, setIsMusicEnabled] = useState(true);
+  const [bgmAudio, setBgmAudio] = useState<HTMLAudioElement | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const [currentCard, setCurrentCard] = useState<PlayableCard | null>(null);
   const [currentOptions, setCurrentOptions] = useState<Option[]>([]);
@@ -175,6 +178,50 @@ export default function Game() {
 
   const currentPhase = gameConfig.phases[currentPhaseIndex];
   const activeStatement = statements[activeStatementIndex];
+
+  // 初始化背景音乐
+  useEffect(() => {
+    const audio = new Audio(`${import.meta.env.BASE_URL}music/bgm.WAV`);
+    audio.volume = 0.3;
+    audio.loop = true;
+    setBgmAudio(audio);
+
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+  }, []);
+
+  // 控制音乐播放/暂停（仅在用户交互后）
+  useEffect(() => {
+    if (bgmAudio && hasInteracted) {
+      if (isMusicEnabled) {
+        bgmAudio.play().catch(() => {});
+      } else {
+        bgmAudio.pause();
+      }
+    }
+  }, [isMusicEnabled, bgmAudio, hasInteracted]);
+  
+  // 监听用户首次交互
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (!hasInteracted) {
+        setHasInteracted(true);
+      }
+    };
+    
+    // 监听多种交互事件
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('keydown', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
+    
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [hasInteracted]);
 
   useEffect(() => {
     if (currentPhase) {
@@ -376,6 +423,11 @@ export default function Game() {
               setCurrentPhaseIndex(p => p + 1);
             } else {
               toast.success("BOSS 已击败！");
+              // 停止背景音乐
+              if (bgmAudio) {
+                bgmAudio.pause();
+                bgmAudio.currentTime = 0;
+              }
             }
             setIsActing(false);
             drawNewCard();
@@ -740,6 +792,23 @@ export default function Game() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* --- 右下角音乐控制按钮 --- */}
+      <button
+        onClick={() => setIsMusicEnabled(!isMusicEnabled)}
+        className={`
+          absolute bottom-6 right-6 z-30 w-14 h-14 rounded-full 
+          flex items-center justify-center
+          border-2 transition-all cursor-pointer
+          ${isMusicEnabled 
+            ? 'border-[#00ffff] text-[#00ffff] bg-black/80 hover:bg-[#00ffff]/10' 
+            : 'border-gray-500 text-gray-500 bg-black/80 hover:bg-gray-500/10'
+          }
+        `}
+        title={isMusicEnabled ? '关闭音乐' : '开启音乐'}
+      >
+        {isMusicEnabled ? <Volume2 size={24} /> : <VolumeX size={24} />}
+      </button>
 
       </div>
     </div>
